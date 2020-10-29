@@ -16,7 +16,7 @@ fn main() {
     gs.ecs.register::<Player>();
     gs.ecs.register::<Name>();
 
-    let player = gs
+    let _player = gs
         .ecs
         .create_entity()
         .with(Player {})
@@ -27,8 +27,11 @@ fn main() {
 
     let mut dispatcher = DispatcherBuilder::new()
         .with(PrintingSystem, "print_sys", &[])
+        .with_thread_local(NetworkingSystem)
         .build();
 
-    dispatcher.dispatch(&mut gs.ecs);
-    gs.ecs.maintain();
+    loop {
+        dispatcher.dispatch(&mut gs.ecs);
+        gs.ecs.maintain();
+    }
 }
