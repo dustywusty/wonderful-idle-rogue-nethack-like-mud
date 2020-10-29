@@ -12,4 +12,10 @@ actix-web = "3"
 actix-web-actors = "3"
 specs = "0.16.1"
 specs-derive = "0.4.1"
+amethyst_network = "0.15.3" 
+log = { version = "0.4", features = ["std", "serde"] }
+[dependencies.amethyst]
+version =  "0.15.3"
+default-features = true
+features = ["empty", "network"]
 
