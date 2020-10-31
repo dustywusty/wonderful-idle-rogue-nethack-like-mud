@@ -1,7 +1,7 @@
-use specs::prelude::*;
-use specs_derive::*;
+use amethyst::ecs::{Component, DenseVecStorage, FlaggedStorage};
 
-#[derive(Component, Debug)]
-pub struct Name {
-    pub name: String,
+pub struct Name {}
+
+impl Component for Name {
+    type Storage = FlaggedStorage<Self, DenseVecStorage<Self>>;
 }

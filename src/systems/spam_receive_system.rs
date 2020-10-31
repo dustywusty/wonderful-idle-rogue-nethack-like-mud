@@ -1,11 +1,12 @@
+use super::{Name, Player};
 use amethyst::{
     core::{bundle::SystemBundle, SystemDesc},
-    ecs::{DispatcherBuilder, Read, System, SystemData, World, Write},
+    ecs::{DispatcherBuilder, Entities, LazyUpdate, Read, System, SystemData, World, Write},
     network::simulation::{NetworkSimulationEvent, TransportResource},
+    prelude::Builder,
     shrev::{EventChannel, ReaderId},
     Result,
 };
-
 use log::{error, info};
 
 #[derive(Debug)]
@@ -54,9 +55,11 @@ impl<'a> System<'a> for SpamReceiveSystem {
     type SystemData = (
         Write<'a, TransportResource>,
         Read<'a, EventChannel<NetworkSimulationEvent>>,
+        Entities<'a>,
+        Read<'a, LazyUpdate>,
     );
 
-    fn run(&mut self, (mut net, channel): Self::SystemData) {
+    fn run(&mut self, (mut net, channel, ent, lazy): Self::SystemData) {
         for event in channel.read(&mut self.reader) {
             match event {
                 NetworkSimulationEvent::Message(addr, payload) => {
@@ -69,6 +72,9 @@ impl<'a> System<'a> for SpamReceiveSystem {
                 }
                 NetworkSimulationEvent::Connect(addr) => {
                     info!("New client connection: {}", addr);
+
+                    let player = lazy.create_entity(&ent).with(Player { socket: *addr });
+
                     net.send(*addr, b"> ");
                 }
                 NetworkSimulationEvent::Disconnect(addr) => {
