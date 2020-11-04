@@ -31,7 +31,7 @@ fn main() -> Result<()> {
 
     let game_data = GameDataBuilder::default()
         .with_bundle(TcpNetworkBundle::new(Some(listener), 2048))?
-        .with_bundle(SpamReceiveBundle)?;
+        .with_bundle(NetworkReceiveBundle)?;
 
     let mut game = Application::build(assets_dir, GameState::default())?
         .with_frame_limit(

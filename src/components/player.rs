@@ -3,7 +3,7 @@ use std::net::SocketAddr;
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct Player {
-    pub socket: SocketAddr,
+    pub addr: SocketAddr,
 }
 
 impl Component for Player {
