@@ -1,11 +1,5 @@
-use amethyst::ecs::{Component, VecStorage};
-use std::net::SocketAddr;
+use specs::prelude::*;
+use specs_derive::*;
 
-#[derive(Debug, PartialEq, Eq)]
-pub struct Player {
-    pub addr: SocketAddr,
-}
-
-impl Component for Player {
-    type Storage = VecStorage<Self>;
-}
+#[derive(Component, Debug)]
+pub struct Player {}

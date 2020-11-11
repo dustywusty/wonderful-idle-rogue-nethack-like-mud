@@ -1,4 +1,7 @@
-mod network_receive_system;
-pub use network_receive_system::*;
+use super::{Name, Player};
 
-use super::{Name, Player, Inbox, Message};
+mod networking_system;
+pub use networking_system::*;
+
+mod printing_system;
+pub use printing_system::*;

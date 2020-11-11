@@ -1,9 +1,4 @@
-use amethyst::{
-    core::frame_limiter::FrameRateLimitStrategy, network::simulation::tcp::TcpNetworkBundle,
-    prelude::*, utils::application_root_dir, Result,
-};
-use std::net::TcpListener;
-use std::time::Duration;
+use specs::{world::Builder, DispatcherBuilder, World, WorldExt};
 
 mod components;
 use components::*;
@@ -11,35 +6,32 @@ use components::*;
 mod systems;
 use systems::*;
 
-#[derive(Default)]
-pub struct GameState {}
-impl SimpleState for GameState {
-    fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
-        let StateData { world, .. } = data;
-
-        world.register::<Player>();
-    }
+pub struct State {
+    pub ecs: World,
 }
 
-fn main() -> Result<()> {
-    amethyst::start_logger(Default::default());
+fn main() {
+    let mut gs = State { ecs: World::new() };
 
-    let listener = TcpListener::bind("0.0.0.0:3457")?;
-    listener.set_nonblocking(true)?;
+    gs.ecs.register::<Player>();
+    gs.ecs.register::<Name>();
 
-    let assets_dir = application_root_dir()?.join("examples/net_server");
+    let _player = gs
+        .ecs
+        .create_entity()
+        .with(Player {})
+        .with(Name {
+            name: "Dusty".to_string(),
+        })
+        .build();
 
-    let game_data = GameDataBuilder::default()
-        .with_bundle(TcpNetworkBundle::new(Some(listener), 2048))?
-        .with_bundle(NetworkReceiveBundle)?;
+    let mut dispatcher = DispatcherBuilder::new()
+        .with(PrintingSystem, "print_sys", &[])
+        .with_thread_local(NetworkingSystem)
+        .build();
 
-    let mut game = Application::build(assets_dir, GameState::default())?
-        .with_frame_limit(
-            FrameRateLimitStrategy::SleepAndYield(Duration::from_millis(2)),
-            60,
-        )
-        .build(game_data)?;
-    game.run();
-
-    Ok(())
+    loop {
+        dispatcher.dispatch(&mut gs.ecs);
+        gs.ecs.maintain();
+    }
 }
