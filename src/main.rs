@@ -32,6 +32,7 @@ fn main() {
         .add_resource(ListenerId::new())
         .add_startup_system(setup_network_listener.system())
         .add_system_to_stage(stage::UPDATE, accept_connections_system.system())
+        .add_system_to_stage(stage::UPDATE, handle_incoming_data.system())
         .add_system_to_stage(stage::UPDATE, handle_error_system.system())
         .run();
 }

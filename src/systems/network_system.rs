@@ -1,10 +1,15 @@
 use bevy::{ecs::prelude::*, prelude::*};
 use bevy_prototype_simple_net::{
   CreateListener, ListenerConnected, ListenerError, ListenerId, NetProtocol, Port, SendSocket,
+  SocketError, SocketReceive,
 };
+
+// ================================================================================================
 
 const HOST_PORT: Port = 4000;
 const LISTENER_PROTOCOL: NetProtocol = NetProtocol::Tcp;
+
+// ================================================================================================
 
 pub fn setup_network_listener(
   listener_id: Res<ListenerId>,
@@ -17,6 +22,8 @@ pub fn setup_network_listener(
   });
   info!(HOST_PORT, "listening on {:?}", "127.0.0.1");
 }
+
+// ================================================================================================
 
 pub fn accept_connections_system(
   mut socket_send: ResMut<Events<SendSocket>>,
@@ -35,6 +42,8 @@ pub fn accept_connections_system(
   }
 }
 
+// ================================================================================================
+
 pub fn handle_error_system(
   mut state: Local<EventReader<ListenerError>>,
   listener_error_events: Res<Events<ListenerError>>,
@@ -44,5 +53,16 @@ pub fn handle_error_system(
       "Listener error (ID: {:?}): \"{:?}\"",
       listener_error_event.id, listener_error_event.err
     );
+  }
+}
+
+// ================================================================================================
+
+pub fn handle_incoming_data(
+  mut state: Local<EventReader<SocketReceive>>,
+  socket_receive_events: Res<Events<SocketReceive>>,
+) {
+  for socket_receive_event in state.iter(&socket_receive_events) {
+    info!("{:?}", socket_receive_event.rx_data);
   }
 }
