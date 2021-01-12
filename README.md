@@ -3,8 +3,8 @@
 
 ## What?
 
-Yeah, I don't know what this is yet. I really, really want to dork around w/:
+Yeah, I don't know what this is yet. I really, really want to dork around w/ game systems, ECS (Entity Component System), and Rust.
 
-* ECS (Entity Component System)
-* Rust
-* & game dev
+## Inspiration 
+
+..
